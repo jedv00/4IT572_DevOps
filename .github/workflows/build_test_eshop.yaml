@@ -1,0 +1,80 @@
+name: Build and tests our Eshop
+
+on: 
+  workflow_dispatch:
+
+jobs: 
+  # install all dependencies
+  Install:
+    runs-on: ubuntu-latest
+
+  steps: 
+    - name: Git Checkout
+      uses: actions/checkout@v2.4.0
+      with: 
+        token: ${{ secrets.WORKFLOW_TOKEN }}
+
+    - name: Setup Node
+      uses: actions/setup_node@v2.4.1
+      with:
+        node-version: 10
+
+    - name: Cache node modules
+      uses: actions/cache@v2
+      with: 
+        path: node_modules
+        key: node_modules-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: node_modules
+
+    - name: Install with npm
+      run: npm ci
+
+Build:
+  needs: Install 
+  runs-on: ubuntu-latest
+
+  steps: 
+    - name: Git Checkout
+      uses: actions/checkout@v2.4.0
+      with: 
+        token: ${{ secrets.WORKFLOW_TOKEN }}
+
+    - name: Setup Node
+      uses: actions/setup_node@v2.4.1
+      with:
+        node-version: 10
+
+    - name: Cache node modules
+      uses: actions/cache@v2
+      with: 
+        path: node_modules
+        key: node_modules-${{ hashFiles('**/package-lock.json') }}
+
+    - name: build
+      run: |
+      npm rebuild node-sass --force
+      npm run build -- --colors
+    
+Test:
+  needs: Install 
+  runs-on: ubuntu-latest
+
+  steps: 
+    - name: Git Checkout
+      uses: actions/checkout@v2.4.0
+      with: 
+        token: ${{ secrets.WORKFLOW_TOKEN }}
+
+    - name: Setup Node
+      uses: actions/setup_node@v2.4.1
+      with:
+        node-version: 10
+
+    - name: Cache node modules
+      uses: actions/cache@v2
+      with: 
+        path: node_modules
+        key: node_modules-${{ hashFiles('**/package-lock.json') }}
+
+    - name: Run Unit Tests
+      run: npm run test -- --colors
