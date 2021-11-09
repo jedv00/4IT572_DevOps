@@ -62,7 +62,7 @@ jobs:
           path: |
           ~/.npm
           ./node_modules
-          -/build
+          ./build
         key: ${{ runner.os }}-build-${{ github.run_id }}
         restore_keys: ${{ runner.os }}-build-${{ github.run_id }}
 
