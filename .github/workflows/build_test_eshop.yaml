@@ -1,7 +1,12 @@
 name: Build and tests our Eshop
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+    - main
+  pull_request:
+      branches:
+    - main
 
 jobs:
   # Install all dependencies
@@ -54,6 +59,7 @@ jobs:
         run: |
           npm rebuild node-sass --force
           npm run build -- --colors
+          
       - name: Cache node modules and build folder
         if: ${{ github.ref == 'refs/heads/master' }}
         uses: actions/cache@v2
